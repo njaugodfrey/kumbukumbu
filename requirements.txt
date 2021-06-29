@@ -1,0 +1,6 @@
+pymongo
+dnspython
+python-dotenv
+tornado
+wtforms-tornado
+typing_extensions

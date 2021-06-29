@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>
+            {{title}}
+        </title>
+    </head>
+    <body>
+        <ul>
+            <li>
+                <a href="/todo_list">Todo List</a>
+            </li>
+            <li>
+                <a href="/todo_form">Todo Form</a>
+            </li>
+        </ul>
+        <ul>
+            
+            {% for item in items %}
+                <li>{{item}}</li>
+            {% end %}
+                
+        </ul>
+    </body>
+</html>

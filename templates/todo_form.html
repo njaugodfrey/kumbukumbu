@@ -1,0 +1,12 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <form action="/todo_form" method="post">
+            {% module xsrf_form_html() %}
+            <input id="action" name="action" required type="text" value=""/>
+            <input type="submit" value="Post"/>
+        </form>
+    </body>
+</html>

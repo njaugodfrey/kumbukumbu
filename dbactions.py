@@ -52,6 +52,7 @@ def db_todo_list(db_name, table_name):
         list_of_things.append(
             dict(
                 [
+                    ('id', thing['_id']['$oid']),
                     ('action', thing['name']),
                     ('date', time.strftime(
                         '%Y-%m-%d', time.localtime(thing['time']['$date']/1000)

@@ -1,12 +1,17 @@
 import os
 import datetime
 import json
+import pprint
+from re import I, S
 from bson.json_util import default
+from bson.objectid import ObjectId
+from pymongo import client_options
 #from typing_extensions import Required
 
 from tornado import ioloop, web
-from wtforms import validators
+from tornado.escape import json_decode
 
+from wtforms import validators
 from wtforms.fields import TextField
 from wtforms.fields.core import BooleanField, DateTimeField
 from wtforms.validators import DataRequired
@@ -68,6 +73,25 @@ class TodoFormHandler(web.RequestHandler):
             self.write(form.errors)
 
 
+class StatusUpdater(web.RequestHandler):
+    def post(self):
+        data = self.request.body
+        activity_id = str(data)[2:26]
+        print(str(data)[2:26])
+
+        client = dbactions.client
+        db = client['tasks']
+        table = db['todo']
+        result = table.find_one({'_id': ObjectId(activity_id)})
+        updated_result = table.update_one(
+            {'_id': ObjectId(activity_id)},
+            {'$set': {'done': 'yes'}}
+        )
+        print(result)
+        print(table.find_one({'_id': ObjectId(activity_id)}))
+
+
+
 settings = {
     'static_path': os.path.join(os.path.dirname(__file__), 'static'),
     'cookie_secret': 'gsN,1=HQ9uu9g?e#Dg-JAb5?*@sdw%0$8DoA3GMT!GLP_eJWeS{J_8-c2r=^4V>',
@@ -81,6 +105,7 @@ def make_app():
             (r'/', MainHandler),
             (r'/todo_list', Todos),
             (r'/todo_form', TodoFormHandler),
+            (r'/update_status', StatusUpdater),
         ], **settings
     )
 

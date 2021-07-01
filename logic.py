@@ -85,8 +85,9 @@ class StatusUpdater(web.RequestHandler):
         result = table.find_one({'_id': ObjectId(activity_id)})
         updated_result = table.update_one(
             {'_id': ObjectId(activity_id)},
-            {'$set': {'done': 'yes'}}
+            {'$set': {'done': 'False'}}
         )
+        table.up
         print(result)
         print(table.find_one({'_id': ObjectId(activity_id)}))
 

@@ -30,8 +30,18 @@ $(document).ready(
                 type: 'POST',
                 data: item_id,
 
-                success: function (response_data) {
-                    console.log(response_data);
+                success: function (json) {
+                    console.log(json);
+                    $('#change-this-' + item_id).parents("tr").remove();
+                    console.log(json.id)
+                    $("#list-of-things").prepend(
+                        "<tr>",
+                        "<td>"+json.action+"</td>",
+                        "<td>"+json.date+"</td>",
+                        "<td>"+json.status+"</td>",
+                        "<td><a class='item-change' id='change-this-"+json.id+"'><button class='btn blue accent-3'>Change</button></a>",
+                        "</tr>"
+                    );
                 },
                 error: function () {
                     console.log('error');

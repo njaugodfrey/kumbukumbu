@@ -1,9 +1,8 @@
 import os
-import datetime
+import datetime, time
 import json
 import pprint
-from re import I, S
-from bson.json_util import default
+from bson.json_util import default, dumps
 from bson.objectid import ObjectId
 from pymongo import client_options
 #from typing_extensions import Required
@@ -75,22 +74,13 @@ class TodoFormHandler(web.RequestHandler):
 
 class StatusUpdater(web.RequestHandler):
     def post(self):
-        data = self.request.body
-        activity_id = str(data)[2:26]
-        print(str(data)[2:26])
-
-        client = dbactions.client
-        db = client['tasks']
-        table = db['todo']
-        result = table.find_one({'_id': ObjectId(activity_id)})
-        updated_result = table.update_one(
-            {'_id': ObjectId(activity_id)},
-            {'$set': {'done': 'False'}}
+        
+        return self.write(
+            dbactions.change_todo_item(
+            db_name='tasks', table_name='todo',
+            item_id=self.request.body
         )
-        table.up
-        print(result)
-        print(table.find_one({'_id': ObjectId(activity_id)}))
-
+        )
 
 
 settings = {

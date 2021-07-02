@@ -3,7 +3,8 @@ import json
 import os
 import time
 import bson
-from bson.json_util import dumps, loads
+from bson.json_util import dumps
+from bson.objectid import ObjectId
 import pprint
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -63,6 +64,41 @@ def db_todo_list(db_name, table_name):
         )
     #print(list_of_things)
     return list_of_things
+
+def change_todo_item(
+    db_name, table_name,
+    item_id
+    ):
+    db = client[db_name]
+    table_name = db[table_name]
+    # clean item_id
+    item_id = str(item_id)[2:26]
+
+    # change the item
+    the_item = json.loads(dumps(table_name.find_one({'_id': ObjectId(item_id)})))
+    if the_item['done'] == 'False':
+        table_name.update_one(
+            {'_id': ObjectId(item_id)},
+            {'$set': {'done': 'True'}}
+        )
+    else:
+        table_name.update_one(
+            {'_id': ObjectId(item_id)},
+            {'$set': {'done': 'False'}}
+        )
+    
+    changed_item = json.loads(dumps(table_name.find_one({'_id': ObjectId(item_id)})))
+    response_item = dict(
+        [
+            ('id', changed_item['_id']['$oid']),
+            ('action', changed_item['name']),
+            ('date', time.strftime(
+                '%Y-%m-%d', time.localtime(changed_item['time']['$date']/1000)
+            )),
+            ('status', changed_item['done']),
+        ]
+    )
+    return response_item
 
 if __name__ == '__main__':
     db_todo_list(db_name='tasks', table_name='todo')
